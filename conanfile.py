@@ -1,4 +1,4 @@
-from conans import ConanFile, CMake, tools, ConfigureEnvironment
+from conans import ConanFile, tools
 import os
 
 
@@ -45,7 +45,8 @@ class CMakeInstallerConan(ConanFile):
         tools.unzip(dest_file)
         os.unlink(dest_file)
         doxyfile = "FindDoxygen.cmake"
-        executeable = os.path.join(self.package_folder, "doxygen")
+        executeable = self.package_folder + "/doxygen"
+        executeable = executeable.replace('\\', '/')
         if self.settings.os == "Windows":
             executeable += ".exe"
 
