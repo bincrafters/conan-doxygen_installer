@@ -54,7 +54,7 @@ class CMakeInstallerConan(ConanFile):
         tools.replace_in_file(doxyfile, "## MARKER POINT: DOXYGEN_VERSION", 'set(DOXYGEN_VERSION "{}")'.format(self.version))
 
     def package(self):
-        self.copy("*", dst="", src="")
+        self.copy("*", dst="", src="" if self.settings.os == "Windows" else "bin")
 
     def package_info(self):
         self.env_info.path.append(self.package_folder)
