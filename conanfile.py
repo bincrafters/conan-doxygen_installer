@@ -50,8 +50,8 @@ class CMakeInstallerConan(ConanFile):
         if self.settings.os == "Windows":
             executeable += ".exe"
 
-        tools.replace_in_file(doxyfile, "## MARKER POINT: DOXYGEN_EXECUTABLE", 'set(DOXYGEN_EXECUTABLE "{}")'.format(executeable))
-        tools.replace_in_file(doxyfile, "## MARKER POINT: DOXYGEN_VERSION", 'set(DOXYGEN_VERSION "{}")'.format(self.version))
+        tools.replace_in_file(doxyfile, "## MARKER POINT: DOXYGEN_EXECUTABLE", 'set(DOXYGEN_EXECUTABLE "{}" CACHE INTERNAL "")'.format(executeable))
+        tools.replace_in_file(doxyfile, "## MARKER POINT: DOXYGEN_VERSION", 'set(DOXYGEN_VERSION "{}" CACHE INTERNAL "")'.format(self.version))
 
     def package(self):
         self.copy("*", dst="", src="" if self.settings.os == "Windows" else "bin")
