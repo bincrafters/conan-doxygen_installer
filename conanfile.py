@@ -27,17 +27,17 @@ class CMakeInstallerConan(ConanFile):
                 ending = "windows.x64.bin.zip"
         else:
             ending = "linux.bin.tar.gz"
-            
+
         return "doxygen-%s.%s" % (self.version, ending)
-#       mac would be: 
-#       ftp://ftp.stack.nl/pub/users/dimitri/Doxygen-1.8.13.dmg but I dunno how to install dmg files.
+#       mac would be:
+#       http://ftp.stack.nl/pub/users/dimitri/doxygen-1.8.13.dmg but I dunno how to install dmg files.
 
     def build(self):
 
         url = "http://ftp.stack.nl/pub/users/dimitri/%s" % self.get_download_filename()
 
 #       source location:
-#       ftp://ftp.stack.nl/pub/users/dimitri/doxygen-1.8.13.src.tar.gz
+#       http://ftp.stack.nl/pub/users/dimitri/doxygen-1.8.13.src.tar.gz
 
         dest_file = "file.tar.gz" if self.settings.os == "Linux" else "file.zip"
         self.output.warn("Downloading: %s" % url)
@@ -54,8 +54,11 @@ class CMakeInstallerConan(ConanFile):
         tools.replace_in_file(doxyfile, "## MARKER POINT: DOXYGEN_VERSION", 'set(DOXYGEN_VERSION "{}" CACHE INTERNAL "")'.format(self.version))
 
     def package(self):
-        self.copy("*", dst="", src="" if self.settings.os == "Windows" else "bin")
+        if self.settings.os == "Windows":
+            srcdir = ""
+        else:
+            srcdir = "doxygen-%s/bin" % self.version
+        self.copy("*", dst=".", src=srcdir)
 
     def package_info(self):
         self.env_info.path.append(self.package_folder)
-        
