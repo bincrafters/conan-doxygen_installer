@@ -2,7 +2,7 @@ from conans import ConanFile, tools
 import os
 
 
-class CMakeInstallerConan(ConanFile):
+class DoxygenConan(ConanFile):
     name = "doxygen"
     version = "1.8.13"
     license = "GNU GPL-2.0"
@@ -45,13 +45,12 @@ class CMakeInstallerConan(ConanFile):
         tools.unzip(dest_file)
         os.unlink(dest_file)
         doxyfile = "FindDoxygen.cmake"
-        executeable = self.package_folder + "/doxygen"
-        executeable = executeable.replace('\\', '/')
+        executeable = "doxygen"
         if self.settings.os == "Windows":
             executeable += ".exe"
 
-        tools.replace_in_file(doxyfile, "## MARKER POINT: DOXYGEN_EXECUTABLE", 'set(DOXYGEN_EXECUTABLE "{}" CACHE INTERNAL "")'.format(executeable))
-        tools.replace_in_file(doxyfile, "## MARKER POINT: DOXYGEN_VERSION", 'set(DOXYGEN_VERSION "{}" CACHE INTERNAL "")'.format(self.version))
+        tools.replace_in_file(doxyfile, "## MARKER POINT: DOXYGEN_EXECUTABLE", 'set(DOXYGEN_EXECUTABLE "${CONAN_DOXYGEN_ROOT}/%s" CACHE INTERNAL "")' % executeable)
+        tools.replace_in_file(doxyfile, "## MARKER POINT: DOXYGEN_VERSION", 'set(DOXYGEN_VERSION "%s" CACHE INTERNAL "")' % self.version)
 
     def package(self):
         if self.settings.os == "Windows":
