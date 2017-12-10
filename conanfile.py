@@ -7,7 +7,7 @@ class DoxygenConan(ConanFile):
     version = "1.8.13"
     license = "GNU GPL-2.0"
     description = "A documentation system for C++, C, Java, IDL and PHP --- Note: Dot is disabled in this package"
-    url = "http://github.com/inexor-game/conan-doxygen"
+    url = "http://github.com/inexorgame/conan-doxygen"
     settings = {"os": ["Windows", "Linux"], "arch": ["x86", "x86_64"]}
 #    options = {"build_from_source": [False, True]} NOT SUPPORTED YET
 #    default_options = "build_from_source=False"
