@@ -1,5 +1,6 @@
 from conans import ConanFile, tools
 import os
+import shutil
 
 
 class DoxygenConan(ConanFile):
@@ -20,6 +21,8 @@ class DoxygenConan(ConanFile):
 
 
     def get_download_filename(self):
+        program = "doxygen"
+
         if self.settings.os == "Windows":
             if self.settings.arch == "x86":
                 ending = "windows.bin.zip"
@@ -34,6 +37,19 @@ class DoxygenConan(ConanFile):
 
         return "%s-%s.%s" % (program, self.version, ending)
 
+    def unpack_dmg(self, dest_file):
+        mount_point = os.path.join(self.build_folder, "mnt")
+        tools.mkdir(mount_point)
+        self.run("hdiutil attach -mountpoint %s %s" % (mount_point, dest_file))
+        try:
+            for program in ["doxygen", "doxyindexer", "doxysearch.cgi"]:
+                shutil.copy(os.path.join(mount_point, "Doxygen.app", "Contents",
+                                         "Resources", program), self.build_folder)
+            shutil.copy(os.path.join(mount_point, "Doxygen.app", "Contents",
+                                    "Frameworks", "libclang.dylib"), self.build_folder)
+        finally:
+            self.run("diskutil eject %s" % (mount_point))
+            tools.rmdir(mount_point)
 
     def build(self):
 
@@ -48,11 +64,18 @@ class DoxygenConan(ConanFile):
             dest_file = "file.dmg"
         else:
             dest_file = "file.zip"
+
         self.output.warn("Downloading: %s" % url)
         tools.download(url, dest_file, verify=False)
-        tools.unzip(dest_file)
+        if self.settings.os == "Macos":
+            self.unpack_dmg(dest_file)
+            # Redirect the path of libclang.dylib to be adjacent to the doxygen executable, instead of in Frameworks
+            self.run('install_name_tool -change "@executable_path/../Frameworks/libclang.dylib" "@executable_path/libclang.dylib" doxygen')
+        else:
+            tools.unzip(dest_file)
         os.unlink(dest_file)
         doxyfile = "FindDoxygen.cmake"
+        shutil.copy(os.path.join(os.path.dirname(__file__), doxyfile), self.build_folder)
         executeable = "doxygen"
         if self.settings.os == "Windows":
             executeable += ".exe"
