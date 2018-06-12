@@ -93,6 +93,7 @@ class DoxygenConan(ConanFile):
         self.copy("doxysearch.cgi", dst=".")
         self.copy("*.exe", dst=".")
         self.copy("*.dylib", dst=".")
+        self.copy("*.dll", dst=".")
         self.copy("*.cmake", dst=".")
 
     def package_info(self):
