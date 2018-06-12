@@ -84,11 +84,16 @@ class DoxygenConan(ConanFile):
         tools.replace_in_file(doxyfile, "## MARKER POINT: DOXYGEN_VERSION", 'set(DOXYGEN_VERSION "%s" CACHE INTERNAL "")' % self.version)
 
     def package(self):
-        if self.settings.os == "Windows":
-            srcdir = ""
-        else:
+        if self.settings.os == "Linux":
             srcdir = "doxygen-%s/bin" % self.version
-        self.copy("*", dst=".", src=srcdir)
+            self.copy("*", dst=".", src=srcdir)
+
+        self.copy("doxygen", dst=".")
+        self.copy("doxyindexer", dst=".")
+        self.copy("doxysearch.cgi", dst=".")
+        self.copy("*.exe", dst=".")
+        self.copy("*.dylib", dst=".")
+        self.copy("*.cmake", dst=".")
 
     def package_info(self):
         self.env_info.path.append(self.package_folder)
