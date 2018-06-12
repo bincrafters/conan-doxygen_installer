@@ -8,15 +8,15 @@ class DoxygenConan(ConanFile):
     license = "GNU GPL-2.0"
     description = "A documentation system for C++, C, Java, IDL and PHP --- Note: Dot is disabled in this package"
     url = "http://github.com/inexorgame/conan-doxygen"
-    settings = {"os": ["Windows", "Linux"], "arch": ["x86", "x86_64"]}
+    settings = {"os": ["Windows", "Linux", "Macos"], "arch": ["x86", "x86_64"]}
 #    options = {"build_from_source": [False, True]} NOT SUPPORTED YET
 #    default_options = "build_from_source=False"
     exports = "FindDoxygen.cmake"
 
     def config(self):
-        if self.settings.os == "Linux" and self.settings.arch == "x86":
+        if self.settings.os in ["Linux", "Macos"] and self.settings.arch == "x86":
             # self.options.build_from_source = True
-            raise Exception("Not supported x86 for Linux")
+            raise Exception("Not supported x86 for Linux or Macos")
 
 
     def get_download_filename(self):
@@ -25,12 +25,15 @@ class DoxygenConan(ConanFile):
                 ending = "windows.bin.zip"
             else:
                 ending = "windows.x64.bin.zip"
+        elif self.settings.os == "Macos":
+            program = "Doxygen"
+            ending = "dmg"
         else:
             ending = "linux.bin.tar.gz"
 
-        return "doxygen-%s.%s" % (self.version, ending)
-#       mac would be:
-#       http://ftp.stack.nl/pub/users/dimitri/doxygen-1.8.13.dmg but I dunno how to install dmg files.
+
+        return "%s-%s.%s" % (program, self.version, ending)
+
 
     def build(self):
 
@@ -39,7 +42,12 @@ class DoxygenConan(ConanFile):
 #       source location:
 #       http://ftp.stack.nl/pub/users/dimitri/doxygen-1.8.13.src.tar.gz
 
-        dest_file = "file.tar.gz" if self.settings.os == "Linux" else "file.zip"
+        if self.settings.os == "Linux":
+            dest_file = "file.tar.gz"
+        elif self.settings.os == "Macos":
+            dest_file = "file.dmg"
+        else:
+            dest_file = "file.zip"
         self.output.warn("Downloading: %s" % url)
         tools.download(url, dest_file, verify=False)
         tools.unzip(dest_file)
