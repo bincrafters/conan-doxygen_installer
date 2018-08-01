@@ -8,11 +8,12 @@ class DoxygenConan(ConanFile):
     version = "1.8.14"
     license = "GNU GPL-2.0"
     description = "A documentation system for C++, C, Java, IDL and PHP --- Note: Dot is disabled in this package"
-    url = "http://github.com/inexorgame/conan-doxygen"
+    url = "https://github.com/inexorgame/conan-doxygen"
     settings = {"os": ["Windows", "Linux", "Macos"], "arch": ["x86", "x86_64"]}
 #    options = {"build_from_source": [False, True]} NOT SUPPORTED YET
 #    default_options = "build_from_source=False"
-    exports = "FindDoxygen.cmake"
+    exports = ["LICENSE", "FindDoxygen.cmake"]
+    exports_sources = ["FindDoxygen.cmake"]
 
     def config(self):
         if self.settings.os in ["Linux", "Macos"] and self.settings.arch == "x86":
@@ -52,11 +53,10 @@ class DoxygenConan(ConanFile):
             tools.rmdir(mount_point)
 
     def build(self):
+        # source location:
+        # http://ftp.stack.nl/pub/users/dimitri/doxygen-1.8.13.src.tar.gz
 
         url = "http://ftp.stack.nl/pub/users/dimitri/%s" % self.get_download_filename()
-
-#       source location:
-#       http://ftp.stack.nl/pub/users/dimitri/doxygen-1.8.13.src.tar.gz
 
         if self.settings.os == "Linux":
             dest_file = "file.tar.gz"
@@ -74,8 +74,8 @@ class DoxygenConan(ConanFile):
         else:
             tools.unzip(dest_file)
         os.unlink(dest_file)
+
         doxyfile = "FindDoxygen.cmake"
-        shutil.copy(os.path.join(os.path.dirname(__file__), doxyfile), self.build_folder)
         executeable = "doxygen"
         if self.settings.os == "Windows":
             executeable += ".exe"
