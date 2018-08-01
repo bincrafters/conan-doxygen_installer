@@ -1,81 +1,36 @@
-from conans import ConanFile, tools
+from conans import ConanFile, CMake, tools
 import os
-import shutil
 
 
 class DoxygenConan(ConanFile):
     name = "doxygen"
     version = "1.8.14"
-    license = "GNU GPL-2.0"
+    license = "GPL-2.0"
     description = "A documentation system for C++, C, Java, IDL and PHP --- Note: Dot is disabled in this package"
-    url = "http://github.com/inexorgame/conan-doxygen"
-    settings = {"os": ["Windows", "Linux", "Macos"], "arch": ["x86", "x86_64"]}
-#    options = {"build_from_source": [False, True]} NOT SUPPORTED YET
-#    default_options = "build_from_source=False"
-    exports = "FindDoxygen.cmake"
+    url = "https://github.com/inexorgame/conan-doxygen"
+    requires = "flex/2.6.4@bincrafters/stable"
+    settings = "arch", "build_type", "compiler", "os"
+    options = {
+        "shared": [True, False],
+        "fPIC": [True, False],
+        "use_libclang": [True, False]
+    }
+    default_options = "shared=False", "fPIC=True", "use_libclang=False"
+    exports = ["LICENSE", "FindDoxygen.cmake"]
+    exports_sources = ["CMakeLists.txt", "FindDoxygen.cmake"]
+    generators = "cmake"
 
-    def config(self):
-        if self.settings.os in ["Linux", "Macos"] and self.settings.arch == "x86":
-            # self.options.build_from_source = True
-            raise Exception("Not supported x86 for Linux or Macos")
+    source_subfolder = "source_subfolder"
+    build_subfolder = "build_subfolder"
 
+    def source(self):
+        archive_name = "Release_{!s}".format(self.version.replace('.', '_'))
+        archive_url = "https://github.com/doxygen/doxygen/archive/{!s}.zip".format(archive_name)
+        tools.get(archive_url, sha256="552355c4accf9a0027814460c475f9472658ba923b91e387e8110090a6c5248c")
+        os.rename("doxygen-{!s}".format(archive_name), self.source_subfolder)
 
-    def get_download_filename(self):
-        program = "doxygen"
-
-        if self.settings.os == "Windows":
-            if self.settings.arch == "x86":
-                ending = "windows.bin.zip"
-            else:
-                ending = "windows.x64.bin.zip"
-        elif self.settings.os == "Macos":
-            program = "Doxygen"
-            ending = "dmg"
-        else:
-            ending = "linux.bin.tar.gz"
-
-
-        return "%s-%s.%s" % (program, self.version, ending)
-
-    def unpack_dmg(self, dest_file):
-        mount_point = os.path.join(self.build_folder, "mnt")
-        tools.mkdir(mount_point)
-        self.run("hdiutil attach -mountpoint %s %s" % (mount_point, dest_file))
-        try:
-            for program in ["doxygen", "doxyindexer", "doxysearch.cgi"]:
-                shutil.copy(os.path.join(mount_point, "Doxygen.app", "Contents",
-                                         "Resources", program), self.build_folder)
-            shutil.copy(os.path.join(mount_point, "Doxygen.app", "Contents",
-                                    "Frameworks", "libclang.dylib"), self.build_folder)
-        finally:
-            self.run("diskutil eject %s" % (mount_point))
-            tools.rmdir(mount_point)
-
-    def build(self):
-
-        url = "http://ftp.stack.nl/pub/users/dimitri/%s" % self.get_download_filename()
-
-#       source location:
-#       http://ftp.stack.nl/pub/users/dimitri/doxygen-1.8.13.src.tar.gz
-
-        if self.settings.os == "Linux":
-            dest_file = "file.tar.gz"
-        elif self.settings.os == "Macos":
-            dest_file = "file.dmg"
-        else:
-            dest_file = "file.zip"
-
-        self.output.warn("Downloading: %s" % url)
-        tools.download(url, dest_file, verify=False)
-        if self.settings.os == "Macos":
-            self.unpack_dmg(dest_file)
-            # Redirect the path of libclang.dylib to be adjacent to the doxygen executable, instead of in Frameworks
-            self.run('install_name_tool -change "@executable_path/../Frameworks/libclang.dylib" "@executable_path/libclang.dylib" doxygen')
-        else:
-            tools.unzip(dest_file)
-        os.unlink(dest_file)
         doxyfile = "FindDoxygen.cmake"
-        shutil.copy(os.path.join(os.path.dirname(__file__), doxyfile), self.build_folder)
+        cmakefile = "{!s}/CMakeLists.txt".format(self.source_subfolder)
         executeable = "doxygen"
         if self.settings.os == "Windows":
             executeable += ".exe"
@@ -83,7 +38,31 @@ class DoxygenConan(ConanFile):
         tools.replace_in_file(doxyfile, "## MARKER POINT: DOXYGEN_EXECUTABLE", 'set(DOXYGEN_EXECUTABLE "${CONAN_DOXYGEN_ROOT}/%s" CACHE INTERNAL "")' % executeable)
         tools.replace_in_file(doxyfile, "## MARKER POINT: DOXYGEN_VERSION", 'set(DOXYGEN_VERSION "%s" CACHE INTERNAL "")' % self.version)
 
+        tools.replace_in_file(cmakefile, "include(version)", "include('${CMAKE_CURRENT_SOURCE_DIR}/cmake/version.cmake')")
+
+
+    def config_options(self):
+        if self.settings.os == 'Windows':
+            del self.options.fPIC
+
+    def _configure_cmake(self):
+        cmake = CMake(self)
+        cmake.definitions["win_static"] = "ON" if self.settings.os == 'Windows' and self.options.shared == False else "OFF"
+        cmake.definitions["use_libclang"] = "ON" if self.options.use_libclang else "OFF"
+
+        cmake.configure(build_folder=self.build_subfolder)
+        return cmake
+
+    def build(self):
+        cmake = self._configure_cmake()
+        cmake.build()
+
     def package(self):
+        cmake = self._configure_cmake()
+        cmake.install()
+
+        self.copy(pattern="LICENSE", dst="licenses", src=self.source_subfolder)
+
         if self.settings.os == "Linux":
             srcdir = "doxygen-%s/bin" % self.version
             self.copy("*", dst=".", src=srcdir)
@@ -97,4 +76,5 @@ class DoxygenConan(ConanFile):
         self.copy("*.cmake", dst=".")
 
     def package_info(self):
-        self.env_info.path.append(self.package_folder)
+        self.cpp_info.libs = tools.collect_libs(self)
+        # self.env_info.path.append(self.package_folder)
