@@ -55,9 +55,9 @@ class DoxygenConan(ConanFile):
 
     def build(self):
         # source location:
-        # http://ftp.stack.nl/pub/users/dimitri/doxygen-1.8.13.src.tar.gz
+        # http://doxygen.nl/files/doxygen-1.8.15.src.tar.gz
 
-        url = "http://ftp.stack.nl/pub/users/dimitri/%s" % self.get_download_filename()
+        url = "http://doxygen.nl/files/%s" % self.get_download_filename()
 
         if self.settings.os == "Linux":
             dest_file = "file.tar.gz"
