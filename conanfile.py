@@ -1,4 +1,5 @@
 from conans import ConanFile, tools
+from conans.errors import ConanInvalidConfiguration
 import os
 import shutil
 
@@ -18,7 +19,7 @@ class DoxygenConan(ConanFile):
     def config(self):
         if self.settings.os in ["Linux", "Macos"] and self.settings.arch == "x86":
             # self.options.build_from_source = True
-            raise Exception("Not supported x86 for Linux or Macos")
+            raise ConanInvalidConfiguration("Not supported x86 for Linux or Macos")
 
 
     def get_download_filename(self):
