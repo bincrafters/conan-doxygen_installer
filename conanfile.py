@@ -6,7 +6,7 @@ import shutil
 
 class DoxygenConan(ConanFile):
     name = "doxygen"
-    version = "1.8.14"
+    version = "1.8.15"
     license = "GPL-2.0-only"
     description = "A documentation system for C++, C, Java, IDL and PHP --- Note: Dot is disabled in this package"
     url = "https://github.com/inexorgame/conan-doxygen"
