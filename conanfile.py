@@ -7,14 +7,18 @@ import shutil
 class DoxygenConan(ConanFile):
     name = "doxygen"
     version = "1.8.15"
-    license = "GPL-2.0-only"
     description = "A documentation system for C++, C, Java, IDL and PHP --- Note: Dot is disabled in this package"
+    topics = ("conan", "doxygen", "installer", "devtool", "documentation")
     url = "https://github.com/inexorgame/conan-doxygen"
+    homepage = "https://github.com/doxygen/doxygen"
+    author = "Inexor <info@inexor.org>"
+    license = "GPL-2.0-only"
+    exports = ["LICENSE", "FindDoxygen.cmake"]
+    exports_sources = ["FindDoxygen.cmake"]
+
     settings = {"os": ["Windows", "Linux", "Macos"], "arch": ["x86", "x86_64"]}
 #    options = {"build_from_source": [False, True]} NOT SUPPORTED YET
 #    default_options = "build_from_source=False"
-    exports = ["LICENSE", "FindDoxygen.cmake"]
-    exports_sources = ["FindDoxygen.cmake"]
 
     def config(self):
         if self.settings.os in ["Linux", "Macos"] and self.settings.arch == "x86":
