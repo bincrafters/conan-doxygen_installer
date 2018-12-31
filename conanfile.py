@@ -16,7 +16,7 @@ class DoxygenConan(ConanFile):
     exports = ["LICENSE", "FindDoxygen.cmake"]
     exports_sources = ["FindDoxygen.cmake"]
 
-    settings = {"os": ["Windows", "Linux", "Macos"], "arch": ["x86", "x86_64"]}
+    settings = {"os_build": ["Windows", "Linux", "Macos"], "arch_build": ["x86", "x86_64"]}
 #    options = {"build_from_source": [False, True]} NOT SUPPORTED YET
 #    default_options = "build_from_source=False"
 
