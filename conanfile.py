@@ -4,8 +4,8 @@ import os
 import shutil
 
 
-class DoxygenConan(ConanFile):
-    name = "doxygen"
+class DoxygenInstallerConan(ConanFile):
+    name = "doxygen_installer"
     version = "1.8.15"
     description = "A documentation system for C++, C, Java, IDL and PHP --- Note: Dot is disabled in this package"
     topics = ("conan", "doxygen", "installer", "devtool", "documentation")
