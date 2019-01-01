@@ -9,7 +9,7 @@ class DoxygenInstallerConan(ConanFile):
     version = "1.8.15"
     description = "A documentation system for C++, C, Java, IDL and PHP --- Note: Dot is disabled in this package"
     topics = ("conan", "doxygen", "installer", "devtool", "documentation")
-    url = "https://github.com/inexorgame/conan-doxygen"
+    url = "https://github.com/bincrafters/conan-doxygen_installer"
     homepage = "https://github.com/doxygen/doxygen"
     author = "Inexor <info@inexor.org>"
     license = "GPL-2.0-only"
