@@ -84,7 +84,7 @@ class DoxygenInstallerConan(ConanFile):
         if self.settings.os_build == "Windows":
             executeable += ".exe"
 
-        tools.replace_in_file(doxyfile, "## MARKER POINT: DOXYGEN_EXECUTABLE", 'set(DOXYGEN_EXECUTABLE "${{CONAN_DOXYGEN_ROOT}}/{0}" CACHE INTERNAL "")'.format(executeable))
+        tools.replace_in_file(doxyfile, "## MARKER POINT: DOXYGEN_EXECUTABLE", 'set(DOXYGEN_EXECUTABLE "${{CONAN_DOXYGEN_INSTALLER_ROOT}}/{0}" CACHE INTERNAL "")'.format(executeable))
         tools.replace_in_file(doxyfile, "## MARKER POINT: DOXYGEN_VERSION", 'set(DOXYGEN_VERSION "{}" CACHE INTERNAL "")'.format(self.version))
 
     def package(self):
