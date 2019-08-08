@@ -6,7 +6,7 @@ import shutil
 
 class DoxygenInstallerConan(ConanFile):
     name = "doxygen_installer"
-    version = "1.8.15"
+    version = "1.8.16"
     description = "A documentation system for C++, C, Java, IDL and PHP --- Note: Dot is disabled in this package"
     topics = ("conan", "doxygen", "installer", "devtool", "documentation")
     url = "https://github.com/bincrafters/conan-doxygen_installer"
@@ -17,8 +17,8 @@ class DoxygenInstallerConan(ConanFile):
     exports_sources = ["FindDoxygen.cmake"]
 
     settings = {"os_build": ["Windows", "Linux", "Macos"], "arch_build": ["x86", "x86_64"]}
-#    options = {"build_from_source": [False, True]} NOT SUPPORTED YET
-#    default_options = "build_from_source=False"
+#   options = {"build_from_source": [False, True]} NOT SUPPORTED YET
+#   default_options = "build_from_source=False"
 
     def config(self):
         if self.settings.os_build in ["Linux", "Macos"] and self.settings.arch_build == "x86":
@@ -58,7 +58,7 @@ class DoxygenInstallerConan(ConanFile):
 
     def build(self):
         # source location:
-        # https://downloads.sourceforge.net/project/doxygen/rel-1.8.15/doxygen-1.8.15.linux.bin.tar.gz
+        # https://downloads.sourceforge.net/project/doxygen/rel-1.8.16/doxygen-1.8.16.linux.bin.tar.gz
 
         url = "http://downloads.sourceforge.net/project/doxygen/rel-{}/{}".format(self.version, self.get_download_filename())
 
