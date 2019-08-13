@@ -87,7 +87,7 @@ class DoxygenInstallerConan(ConanFile):
     def package(self):
         if self.settings.os_build == "Linux":
             srcdir = "doxygen-{}/bin".format(self.version)
-            self.copy("*", dst=".", src=srcdir)
+            self.copy("*", dst="", src=srcdir)
 
         self.copy("doxygen", dst="bin")
         self.copy("doxyindexer", dst="bin")
@@ -97,4 +97,4 @@ class DoxygenInstallerConan(ConanFile):
         self.copy("*.dll", dst="bin")
 
     def package_info(self):
-        self.env_info.path.append(os.path.join(self.package_folder,"bin"))
+        self.env_info.PATH.append(os.path.join(self.package_folder,"bin"))

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from conans import ConanFile, CMake
+from conans import ConanFile, CMake, tools
 
 class TestPackageConan(ConanFile):
     generators = "cmake_paths"
@@ -11,5 +11,6 @@ class TestPackageConan(ConanFile):
         cmake.build()
         
     def test(self):
-        self.output.info("Version:")
-        self.run("doxygen --version", run_environment=True)
+        if not tools.cross_building(self.settings):
+            self.output.info("Version:")
+            self.run("doxygen --version", run_environment=True)
