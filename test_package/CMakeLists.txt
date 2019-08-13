@@ -4,7 +4,7 @@ include(${CMAKE_BINARY_DIR}/conan_paths.cmake)
 
 project(test_package)
 
-find_package(Doxygen REQUIRED doxygen)
+find_package(Doxygen REQUIRED)
 
 add_executable(${PROJECT_NAME} test_package.cpp)
 
