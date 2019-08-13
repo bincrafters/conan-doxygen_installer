@@ -8,4 +8,4 @@ find_package(Doxygen REQUIRED)
 
 add_executable(${PROJECT_NAME} test_package.cpp)
 
-doxygen_add_docs(docs ALL COMMENT "generate HTML")
+doxygen_add_docs(docs ${PROJECT_SOURCE_DIR} ALL COMMENT "generate HTML")
