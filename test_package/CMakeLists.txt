@@ -13,7 +13,6 @@ set(DOXYGEN_PROJECT_BRIEF "test package")
 set(DOXYGEN_ALIASES
   [[conan="@conanio"]]
 )
-set(DOXYGEN_VERBATIM_VARS DOXYGEN_ALIASES)
 
 # https://gitlab.kitware.com/cmake/cmake/issues/18738
 set(DOXYGEN_LATEX_MAKEINDEX_CMD makeindex)
