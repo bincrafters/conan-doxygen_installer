@@ -8,4 +8,12 @@ find_package(Doxygen REQUIRED)
 
 add_executable(${PROJECT_NAME} test_package.cpp)
 
-doxygen_add_docs(docs ${PROJECT_SOURCE_DIR} ALL COMMENT "generate HTML")
+set(DOXYGEN_GENERATE_HTML NO)
+set(DOXYGEN_GENERATE_MAN YES)
+set(DOXYGEN_PROJECT_BRIEF "test package")
+set(DOXYGEN_ALIASES
+  [[conan="@conanio"]]
+)
+set(DOXYGEN_VERBATIM_VARS DOXYGEN_ALIASES)
+
+doxygen_add_docs(docs test_package.cpp ALL COMMENT "generate HTML")
