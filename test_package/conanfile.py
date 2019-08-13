@@ -3,8 +3,8 @@
 
 from conans import ConanFile, CMake
 
-
 class TestPackageConan(ConanFile):
+    generators = "cmake_paths"
     def build(self):
         cmake = CMake(self)
         cmake.configure()

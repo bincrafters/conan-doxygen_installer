@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
 
+include(${CMAKE_BINARY_DIR}/conan_paths.cmake)
+
 project(test_package)
 
 find_package(Doxygen REQUIRED)
