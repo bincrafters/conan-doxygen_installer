@@ -6,15 +6,13 @@ import shutil
 
 class DoxygenInstallerConan(ConanFile):
     name = "doxygen_installer"
-    version = "1.8.16"
+    version = "1.8.17"
     description = "A documentation system for C++, C, Java, IDL and PHP --- Note: Dot is disabled in this package"
     topics = ("conan", "doxygen", "installer", "devtool", "documentation")
     url = "https://github.com/bincrafters/conan-doxygen_installer"
     homepage = "https://github.com/doxygen/doxygen"
     author = "Inexor <info@inexor.org>"
     license = "GPL-2.0-only"
-    exports = ["LICENSE", "FindDoxygen.cmake"]
-    exports_sources = ["FindDoxygen.cmake"]
 
     settings = {"os_build": ["Windows", "Linux", "Macos"], "arch_build": ["x86", "x86_64"]}
 #   options = {"build_from_source": [False, True]} NOT SUPPORTED YET
@@ -58,7 +56,7 @@ class DoxygenInstallerConan(ConanFile):
 
     def build(self):
         # source location:
-        # https://downloads.sourceforge.net/project/doxygen/rel-1.8.16/doxygen-1.8.16.linux.bin.tar.gz
+        # https://downloads.sourceforge.net/project/doxygen/rel-1.8.17/doxygen-1.8.17.linux.bin.tar.gz
 
         url = "http://downloads.sourceforge.net/project/doxygen/rel-{}/{}".format(self.version, self.get_download_filename())
 
@@ -79,7 +77,6 @@ class DoxygenInstallerConan(ConanFile):
             tools.unzip(dest_file)
         os.unlink(dest_file)
 
-        doxyfile = "FindDoxygen.cmake"
         executeable = "doxygen"
         if self.settings.os_build == "Windows":
             executeable += ".exe"
@@ -97,4 +94,6 @@ class DoxygenInstallerConan(ConanFile):
         self.copy("*.dll", dst="bin")
 
     def package_info(self):
-        self.env_info.PATH.append(os.path.join(self.package_folder,"bin"))
+        bindir = os.path.join(self.package_folder, "bin")
+        self.output.info("Appending PATH environment variable: {}".format(bindir))
+        self.env_info.PATH.append(bindir)
