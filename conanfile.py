@@ -6,7 +6,7 @@ import shutil
 
 class DoxygenInstallerConan(ConanFile):
     name = "doxygen_installer"
-    version = "1.8.17"
+    version = "1.8.18"
     description = "A documentation system for C++, C, Java, IDL and PHP --- Note: Dot is disabled in this package"
     topics = ("conan", "doxygen", "installer", "devtool", "documentation")
     url = "https://github.com/bincrafters/conan-doxygen_installer"
