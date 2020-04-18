@@ -14,24 +14,27 @@ class DoxygenInstallerConan(ConanFile):
     author = "Inexor <info@inexor.org>"
     license = "GPL-2.0-only"
 
-    settings = {"os_build": ["Windows", "Linux", "Macos"], "arch_build": ["x86", "x86_64"]}
+    settings = "os", "arch"
 #   options = {"build_from_source": [False, True]} NOT SUPPORTED YET
 #   default_options = "build_from_source=False"
 
-    def config(self):
-        if self.settings.os_build in ["Linux", "Macos"] and self.settings.arch_build == "x86":
+    def configure(self):
+        if not self.settings.os in ["Windows", "Linux", "Macos"]:
+            raise ConanInvalidConfiguration("Only Linux, Windows and macOS are supported by this recipe")
+        if not self.settings.arch in ["x86", "x86_64"]:
+            raise ConanInvalidConfiguration("Only x86 and x86_64 are supported by this recipe")
+        if self.settings.os in ["Linux", "Macos"] and self.settings.arch == "x86":
             raise ConanInvalidConfiguration("x86 is not supported on Linux or Macos")
-
 
     def get_download_filename(self):
         program = "doxygen"
 
-        if self.settings.os_build == "Windows":
-            if self.settings.arch_build == "x86":
+        if self.settings.os == "Windows":
+            if self.settings.arch == "x86":
                 ending = "windows.bin.zip"
             else:
                 ending = "windows.x64.bin.zip"
-        elif self.settings.os_build == "Macos":
+        elif self.settings.os == "Macos":
             program = "Doxygen"
             ending = "dmg"
         else:
@@ -56,20 +59,20 @@ class DoxygenInstallerConan(ConanFile):
 
     def build(self):
         # source location:
-        # https://downloads.sourceforge.net/project/doxygen/rel-1.8.17/doxygen-1.8.17.linux.bin.tar.gz
+        # https://downloads.sourceforge.net/project/doxygen/rel-1.8.18/doxygen-1.8.18.linux.bin.tar.gz
 
         url = "http://downloads.sourceforge.net/project/doxygen/rel-{}/{}".format(self.version, self.get_download_filename())
 
-        if self.settings.os_build == "Linux":
+        if self.settings.os == "Linux":
             dest_file = "file.tar.gz"
-        elif self.settings.os_build == "Macos":
+        elif self.settings.os == "Macos":
             dest_file = "file.dmg"
         else:
             dest_file = "file.zip"
 
         self.output.warn("Downloading: {}".format(url))
         tools.download(url, dest_file, verify=False)
-        if self.settings.os_build == "Macos":
+        if self.settings.os == "Macos":
             self.unpack_dmg(dest_file)
             # Redirect the path of libclang.dylib to be adjacent to the doxygen executable, instead of in Frameworks
             self.run('install_name_tool -change "@executable_path/../Frameworks/libclang.dylib" "@executable_path/libclang.dylib" doxygen')
@@ -78,11 +81,11 @@ class DoxygenInstallerConan(ConanFile):
         os.unlink(dest_file)
 
         executeable = "doxygen"
-        if self.settings.os_build == "Windows":
+        if self.settings.os == "Windows":
             executeable += ".exe"
 
     def package(self):
-        if self.settings.os_build == "Linux":
+        if self.settings.os == "Linux":
             srcdir = "doxygen-{}/bin".format(self.version)
             self.copy("*", dst="bin", src=srcdir)
 
